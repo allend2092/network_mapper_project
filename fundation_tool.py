@@ -5,6 +5,8 @@ import os
 import socket
 import networkx as nx
 import matplotlib.pyplot as plt
+from pyvis.network import Network
+import networkx as nx
 
 def calculate_throughput(pcap_file, interval):
     # Open the pcap file
@@ -121,6 +123,20 @@ def visualize_network_flows(filename):
     # Display the plot
     plt.title("Network Flows Visualization")
     plt.show()
+    # Create a visualization with Pyvis
+    nt = Network(notebook=True)
+    for node in G.nodes:
+        nt.add_node(node)
+    for edge in G.edges:
+        nt.add_edge(edge[0], edge[1], smooth=False)
+    #nt.from_nx(G)
+    for edge in G.edges(data=True):
+        nt.add_edge(edge[0], edge[1], width=edge[2]['weight'] / 1)
+    nt.toggle_physics(True)  # Enable physics for better visualization
+    nt.show_buttons(filter_=['physics'])  # Show buttons to play with physics properties
+    for edge in nt.edges:
+        edge['color'] = 'red'  # or any other color that stands out
+    nt.show("tmp.html")
 
 def main():
     while True:
